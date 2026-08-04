@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrustLink 无人系统安全通信</title>
+    <meta
+      name="description"
+      content="TrustLink 面向无人机、无人车与多基站环境，提供可信认证、端到端加密、数传图传和多跳安全通信能力。"
+    />
+    <style>
+      :root {
+        --bg-deep: #07111f;
+        --bg-navy: #0b1e34;
+        --panel: rgba(7, 17, 31, 0.72);
+        --panel-strong: rgba(10, 30, 52, 0.86);
+        --line: rgba(148, 204, 255, 0.22);
+        --text: #eef7ff;
+        --muted: #aac0d6;
+        --cyan: #38d5ff;
+        --cyan-soft: rgba(56, 213, 255, 0.2);
+        --amber: #f7c35f;
+        --green: #7ef7c2;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        background: var(--bg-deep);
+        font-family: "HarmonyOS Sans SC", "Microsoft YaHei UI", "Segoe UI", Arial, sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .page {
+        min-height: 100vh;
+        background:
+          linear-gradient(90deg, rgba(4, 11, 24, 0.94) 0%, rgba(5, 21, 38, 0.82) 46%, rgba(7, 15, 28, 0.68) 100%),
+          linear-gradient(180deg, rgba(7, 17, 31, 0.14) 0%, rgba(7, 17, 31, 0.86) 84%, #07111f 100%),
+          url("assets/images/UAV.jpg") center center / cover no-repeat fixed;
+      }
+
+      .nav {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        left: 0;
+        right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(5, 14, 27, 0.72);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav-inner {
+        width: min(1240px, calc(100% - 40px));
+        height: 72px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: max-content;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(56, 213, 255, 0.55);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(56, 213, 255, 0.22), rgba(247, 195, 95, 0.18)),
+          rgba(255, 255, 255, 0.04);
+        display: grid;
+        place-items: center;
+        box-shadow: none;
+      }
+
+      .brand-mark::before {
+        content: "";
+        width: 14px;
+        height: 14px;
+        border-top: 2px solid var(--cyan);
+        border-right: 2px solid var(--cyan);
+        transform: rotate(45deg);
+      }
+
+      .brand-name {
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        flex: 1;
+      }
+
+      .nav-links a,
+      .nav-dropdown summary {
+        padding: 10px 13px;
+        border-radius: 8px;
+        color: rgba(238, 247, 255, 0.82);
+        font-size: 14px;
+        transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+      }
+
+      .nav-links a:hover,
+      .nav-dropdown summary:hover,
+      .nav-dropdown[open] summary {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .nav-dropdown {
+        position: relative;
+      }
+
+      .nav-dropdown summary {
+        display: block;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .nav-dropdown summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .nav-menu {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 10px);
+        left: 0;
+        min-width: 150px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(5, 14, 27, 0.96);
+        box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+      }
+
+      .nav-menu a {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .nav-action {
+        border: 1px solid rgba(56, 213, 255, 0.5);
+        background: rgba(56, 213, 255, 0.13);
+        color: #eaffff;
+        box-shadow: 0 0 28px rgba(56, 213, 255, 0.12);
+      }
+
+      .hero {
+        width: min(1240px, calc(100% - 40px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 116px 0 56px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.06fr) minmax(360px, 0.94fr);
+        align-items: center;
+        gap: 48px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 13px;
+        margin-bottom: 22px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #d9efff;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .eyebrow-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--green);
+        box-shadow: 0 0 18px rgba(126, 247, 194, 0.8);
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 820px;
+        font-size: clamp(48px, 7vw, 86px);
+        line-height: 0.98;
+        letter-spacing: 0;
+        font-weight: 850;
+      }
+
+      .hero-copy {
+        max-width: 720px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: clamp(18px, 2vw, 22px);
+        line-height: 1.72;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 34px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #fff;
+        font-weight: 750;
+        transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #1da9ff, #32e0ff);
+        color: #03101f;
+        box-shadow: 0 18px 42px rgba(50, 224, 255, 0.22);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .hero-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 34px;
+        max-width: 680px;
+      }
+
+      .meta-item {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        background: rgba(4, 14, 27, 0.54);
+      }
+
+      .meta-value {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 850;
+      }
+
+      .meta-label {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .mission-panel {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(12, 34, 58, 0.84), rgba(5, 14, 27, 0.78)),
+          rgba(255, 255, 255, 0.04);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .mission-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: transparent;
+        pointer-events: none;
+      }
+
+      .panel-head {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 18px 0;
+      }
+
+      .panel-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #dff5ff;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--green);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .status::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 14px rgba(126, 247, 194, 0.84);
+      }
+
+      .route-map {
+        position: relative;
+        min-height: 330px;
+        padding: 34px 18px 26px;
+        display: grid;
+        align-items: center;
+      }
+
+      .route-line {
+        position: absolute;
+        top: 51%;
+        left: 11%;
+        right: 11%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(56, 213, 255, 0.75), rgba(247, 195, 95, 0.65), transparent);
+        box-shadow: 0 0 22px rgba(56, 213, 255, 0.32);
+      }
+
+      .nodes {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        align-items: center;
+      }
+
+      .node {
+        min-height: 96px;
+        border: 1px solid rgba(148, 204, 255, 0.24);
+        border-radius: 8px;
+        padding: 14px 10px;
+        background: rgba(2, 13, 27, 0.7);
+        text-align: center;
+      }
+
+      .node-icon {
+        width: 42px;
+        height: 42px;
+        margin: 0 auto 10px;
+        border-radius: 50%;
+        border: 1px solid rgba(56, 213, 255, 0.45);
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.22), transparent 28%),
+          radial-gradient(circle, rgba(56, 213, 255, 0.24) 0 58%, rgba(56, 213, 255, 0.08) 60% 100%);
+        color: #dff7ff;
+        font-size: 11px;
+        font-weight: 950;
+        box-shadow: 0 0 22px rgba(56, 213, 255, 0.18);
+      }
+
+      .node-icon::before {
+        content: attr(data-icon);
+      }
+
+      .node strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .node span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .panel-stats {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--line);
+      }
+
+      .panel-stat {
+        padding: 18px;
+        border-right: 1px solid var(--line);
+      }
+
+      .panel-stat:last-child {
+        border-right: 0;
+      }
+
+      .panel-stat b {
+        display: block;
+        color: var(--cyan);
+        font-size: 20px;
+      }
+
+      .panel-stat span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .section {
+        width: min(1240px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 72px 0;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 28px;
+        margin-bottom: 28px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        max-width: 640px;
+        font-size: clamp(30px, 4vw, 48px);
+        line-height: 1.08;
+      }
+
+      .section-title p {
+        max-width: 430px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+
+      .feature-card {
+        min-height: 228px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 14px 42px rgba(0, 0, 0, 0.18);
+      }
+
+      .feature-kicker {
+        color: var(--cyan);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .feature-card h3 {
+        margin: 14px 0 10px;
+        font-size: 21px;
+      }
+
+      .feature-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .demo-band {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .connect-box,
+      .preview-box {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-strong);
+        box-shadow: var(--shadow);
+      }
+
+      .connect-box {
+        padding: 26px;
+      }
+
+      .connect-box h3,
+      .preview-box h3 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .connect-box p {
+        margin: 14px 0 22px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .control {
+        border: 1px solid rgba(148, 204, 255, 0.18);
+        border-radius: 8px;
+        padding: 12px;
+        background: rgba(3, 12, 24, 0.62);
+      }
+
+      .control label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .control div {
+        font-weight: 800;
+      }
+
+      .connect-button {
+        width: min(100%, 320px);
+        min-height: 64px;
+        margin: 22px auto 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 28px;
+        border: 0;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #38d5ff, #7ef7c2);
+        color: #03101f;
+        font-size: 18px;
+        font-weight: 900;
+        cursor: pointer;
+        line-height: 1;
+        text-decoration: none;
+        box-shadow: 0 18px 44px rgba(56, 213, 255, 0.2);
+      }
+
+      .preview-box {
+        overflow: hidden;
+      }
+
+      .preview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .preview-screen {
+        min-height: 286px;
+        display: grid;
+        place-items: center;
+        padding: 22px;
+        background:
+          linear-gradient(rgba(56, 213, 255, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(56, 213, 255, 0.06) 1px, transparent 1px),
+          rgba(0, 0, 0, 0.18);
+        background-size: 28px 28px;
+      }
+
+      .video-placeholder {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border: 1px solid rgba(56, 213, 255, 0.28);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(56, 213, 255, 0.22), transparent 32%),
+          linear-gradient(135deg, rgba(4, 18, 34, 0.9), rgba(2, 7, 14, 0.92));
+        color: #dff7ff;
+        text-align: center;
+      }
+
+      .placeholder-title {
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .placeholder-sub {
+        margin-top: 8px;
+        color: var(--muted);
+      }
+
+      .footer {
+        border-top: 1px solid var(--line);
+        background: rgba(3, 10, 20, 0.76);
+      }
+
+      .footer-inner {
+        width: min(1240px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 26px 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 980px) {
+        .nav-inner {
+          height: auto;
+          padding: 16px 0;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+        }
+
+        .hero,
+        .demo-band {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding-top: 170px;
+        }
+
+        .feature-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .section-title {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          background-attachment: scroll;
+        }
+
+        .hero,
+        .section,
+        .nav-inner,
+        .footer-inner {
+          width: min(100% - 28px, 1240px);
+        }
+
+        .hero-meta,
+        .feature-grid,
+        .panel-stats,
+        .control-row {
+          grid-template-columns: 1fr;
+        }
+
+        .nodes {
+          grid-template-columns: 1fr;
+        }
+
+        .route-line {
+          display: none;
+        }
+
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="assets/styles/theme.css" />
+  </head>
+  <body class="home-page">
+    <div class="page">
+      <header class="nav">
+        <div class="nav-inner">
+          <a class="brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-name">TrustLink</span>
+          </a>
+          <nav class="nav-links" aria-label="主导航">
+            <a href="pages/data-video.html">数传图传</a>
+            <details class="nav-dropdown">
+              <summary>多基站</summary>
+              <div class="nav-menu">
+                <a href="pages/multi-station.html?mode=simulation">多基站模拟</a>
+                <a href="pages/multi-station.html?mode=real">多基站测试</a>
+                <a href="pages/multi-station.html?mode=hybrid">混合多基站</a>
+              </div>
+            </details>
+            <a href="pages/project.html">作品介绍</a>
+            <a href="pages/innovation.html">创新点</a>
+            <a class="nav-action" href="pages/data-video.html">建立连接</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> 无人系统载荷链路安全通信系统</div>
+            <h1>TrustLink 无人系统安全通信平台</h1>
+            <p class="hero-copy">
+              TrustLink 面向无人系统载荷链路，将可信认证、密钥协商、加密传输与跨基站安全转发置于同一套地面站工作流中，让遥测和图传的安全状态清晰可见。
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="pages/data-video.html">进入数传图传模块</a>
+              <a class="btn btn-secondary" href="#capabilities">查看核心能力</a>
+            </div>
+            <div class="hero-meta" aria-label="系统能力概览">
+              <div class="meta-item">
+                <div class="meta-value">TEE</div>
+                <div class="meta-label">可信环境认证</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-value">X3DH</div>
+                <div class="meta-label">端到端密钥协商</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-value">VRF</div>
+                <div class="meta-label">可验证中继选择</div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="mission-panel" aria-label="链路预览">
+            <div class="panel-head">
+              <div class="panel-title">安全链路任务单</div>
+              <div class="status">READY FOR LINK</div>
+            </div>
+            <div class="route-map">
+              <div class="route-line" aria-hidden="true"></div>
+              <div class="nodes">
+                <div class="node">
+                  <div class="node-icon" data-icon="UAV"></div>
+                  <strong>Drone</strong>
+                  <span>载荷数据源</span>
+                </div>
+                <div class="node">
+                  <div class="node-icon" data-icon="R1"></div>
+                  <strong>R1</strong>
+                  <span>外层解封</span>
+                </div>
+                <div class="node">
+                  <div class="node-icon" data-icon="R2"></div>
+                  <strong>R2</strong>
+                  <span>路径中继</span>
+                </div>
+                <div class="node">
+                  <div class="node-icon" data-icon="R3"></div>
+                  <strong>R3</strong>
+                  <span>链路转发</span>
+                </div>
+                <div class="node">
+                  <div class="node-icon" data-icon="GS"></div>
+                  <strong>Ground</strong>
+                  <span>解密展示</span>
+                </div>
+              </div>
+            </div>
+            <div class="panel-stats">
+              <div class="panel-stat">
+                <b>4 阶段</b>
+                <span>认证与密钥建立</span>
+              </div>
+              <div class="panel-stat">
+                <b>PATH-BOUND</b>
+                <span>多跳路径保护</span>
+              </div>
+              <div class="panel-stat">
+                <b>Web</b>
+                <span>可视化控制台</span>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="section" id="capabilities">
+          <div class="section-title">
+            <h2>围绕无人设备通信链路设计的核心能力</h2>
+            <p>围绕可信身份、密钥协商、载荷加密和路径防护构建完整链路安全能力。</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-kicker">可信接入</div>
+              <h3>可信启动与远程认证</h3>
+              <p>通过 TEE 度量、远程认证和设备身份验证，确认通信双方运行环境可信。</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-kicker">会话保护</div>
+              <h3>端到端加密通信</h3>
+              <p>承接 SRP-PAKE、X3DH 与 SM4/SM3 等协议模块，形成可解释的会话密钥与载荷保护链路。</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-kicker">路径防护</div>
+              <h3>多基站与洋葱转发</h3>
+              <p>展示多基站协同转发、路径选择和分层加密过程，中继节点只处理本跳信息、无法获取中间信息。</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-kicker">任务可观测性</div>
+              <h3>数传图传融合展示</h3>
+              <p>集中展示视频画面、遥测数据、帧率、带宽、延迟和安全会话状态。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="demo">
+          <div class="section-title">
+            <h2>数传图传联合监控</h2>
+            <p>进入控制台后可查看遥测数据、图传画面、链路状态等。</p>
+          </div>
+          <div class="demo-band">
+            <div class="connect-box">
+              <h3>连接控制台</h3>
+              <p>面向地面站载荷链路，集中呈现数传遥测、图传画面和安全会话状态。</p>
+              <div class="control-row">
+                <div class="control">
+                  <label>Data API</label>
+                  <div>5050</div>
+                </div>
+                <div class="control">
+                  <label>Video API</label>
+                  <div>8080</div>
+                </div>
+              </div>
+              <div class="control-row">
+                <div class="control">
+                  <label>Video Feed</label>
+                  <div>GROUND</div>
+                </div>
+                <div class="control">
+                  <label>Status</label>
+                  <div>Ready</div>
+                </div>
+              </div>
+              <a class="connect-button" href="pages/data-video.html">进入控制台</a>
+            </div>
+            <div class="preview-box">
+              <div class="preview-head">
+                <h3>视频与数据预览</h3>
+                <div class="status">SECURE VIEW</div>
+              </div>
+              <div class="preview-screen">
+                <div class="video-placeholder">
+                  <div>
+                    <div class="placeholder-title">Encrypted Video Preview</div>
+                    <div class="placeholder-sub">解密视频展示</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <div>TrustLink 无人系统安全通信平台</div>
+          <div>Secure payload link · Data and video protection</div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

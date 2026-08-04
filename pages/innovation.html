@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>创新点介绍 | TrustLink</title>
+    <meta
+      name="description"
+      content="TrustLink 论文创新：连续安全链、路径隐私、路径绑定与弱覆盖安全转发"
+    />
+    <style>
+      :root {
+        --bg: #07111f;
+        --panel: rgba(8, 24, 43, 0.86);
+        --panel-soft: rgba(12, 33, 56, 0.72);
+        --line: rgba(145, 205, 255, 0.22);
+        --text: #eef7ff;
+        --muted: #aac0d6;
+        --cyan: #38d5ff;
+        --green: #7ef7c2;
+        --amber: #f7c35f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          linear-gradient(90deg, rgba(4, 11, 24, 0.72), rgba(5, 21, 38, 0.56)),
+          linear-gradient(180deg, rgba(7, 17, 31, 0.08) 0%, rgba(7, 17, 31, 0.5) 100%),
+          url("../assets/images/UAV.jpg") center / cover fixed no-repeat,
+          var(--bg);
+        font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .nav {
+        position: fixed;
+        z-index: 20;
+        inset: 0 0 auto;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(5, 14, 27, 0.8);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav-inner {
+        width: min(1180px, calc(100% - 40px));
+        min-height: 72px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 850;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid rgba(56, 213, 255, 0.5);
+        background: linear-gradient(135deg, rgba(56, 213, 255, 0.2), rgba(126, 247, 194, 0.14));
+        box-shadow: 0 0 24px rgba(56, 213, 255, 0.25);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a,
+      .nav-dropdown summary {
+        padding: 9px 12px;
+        border-radius: 8px;
+        color: rgba(238, 247, 255, 0.8);
+        font-size: 14px;
+      }
+
+      .nav-links a:hover,
+      .nav-links .active,
+      .nav-dropdown summary:hover,
+      .nav-dropdown[open] summary {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .nav-dropdown {
+        position: relative;
+      }
+
+      .nav-dropdown summary {
+        display: block;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .nav-dropdown summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .nav-menu {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 10px);
+        left: 0;
+        min-width: 150px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(5, 14, 27, 0.96);
+        box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+      }
+
+      .nav-menu a {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 118px 0 64px;
+      }
+
+      .hero {
+        max-width: 900px;
+        padding: 42px 0 34px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 13px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #dff4ff;
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 18px rgba(126, 247, 194, 0.75);
+      }
+
+      h1 {
+        margin: 22px 0 0;
+        font-size: clamp(42px, 6vw, 72px);
+        line-height: 1.04;
+      }
+
+      .lead {
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.75;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin: 32px 0 44px;
+      }
+
+      .summary-item,
+      .card,
+      .compare,
+      .formula,
+      .highlight {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.24);
+      }
+
+      .summary-item {
+        padding: 18px;
+      }
+
+      .summary-item b {
+        display: block;
+        color: var(--cyan);
+        font-size: 28px;
+      }
+
+      .summary-item span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .section {
+        padding: 42px 0;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 28px;
+        margin-bottom: 22px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 44px);
+        line-height: 1.12;
+      }
+
+      .section-head p {
+        max-width: 460px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .innovation-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .num {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: #03101f;
+        font-weight: 950;
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+      }
+
+      .tag {
+        color: var(--amber);
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .card h3 {
+        margin: 18px 0 10px;
+        font-size: 24px;
+      }
+
+      .card p,
+      .card li,
+      .compare td {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .card ul {
+        margin: 14px 0 0;
+        padding-left: 18px;
+      }
+
+      .formula {
+        margin-top: 16px;
+        padding: 14px 16px;
+        color: #def8ff;
+        font-family: Consolas, "Courier New", monospace;
+        overflow-x: auto;
+        line-height: 1.65;
+        background: rgba(2, 12, 24, 0.68);
+      }
+
+      .highlight {
+        padding: 26px;
+        background: linear-gradient(135deg, rgba(56, 213, 255, 0.13), rgba(126, 247, 194, 0.08));
+      }
+
+      .highlight h3 {
+        margin: 0 0 10px;
+        font-size: 28px;
+      }
+
+      .highlight p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.75;
+      }
+
+      .compare {
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px 16px;
+        border-bottom: 1px solid rgba(145, 205, 255, 0.16);
+        text-align: left;
+      }
+
+      th {
+        background: rgba(56, 213, 255, 0.12);
+      }
+
+      .yes {
+        color: var(--green);
+        font-weight: 900;
+      }
+
+      .limited {
+        color: var(--amber);
+        font-weight: 900;
+      }
+
+      .footer {
+        padding: 28px 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      @media (max-width: 960px) {
+        .nav-inner {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 16px 0;
+        }
+
+        .nav-links {
+          justify-content: flex-start;
+        }
+
+        .summary,
+        .innovation-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100% - 28px, 1180px);
+        }
+
+        .footer {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/styles/theme.css" />
+  </head>
+  <body class="editorial-page innovation-page">
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-mark"></span>
+          <span>TrustLink</span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+          <a href="../index.html">首页</a>
+          <a href="data-video.html">数传图传</a>
+          <details class="nav-dropdown">
+            <summary>多基站</summary>
+            <div class="nav-menu">
+              <a href="multi-station.html?mode=simulation">多基站模拟</a>
+              <a href="multi-station.html?mode=real">多基站测试</a>
+              <a href="multi-station.html?mode=hybrid">混合多基站</a>
+            </div>
+          </details>
+          <a href="project.html">作品介绍</a>
+          <a class="active" href="innovation.html">创新点</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero innovation-hero">
+        <h1>从端点到路径的连续安全链</h1>
+        <p class="lead">
+          TrustLink 的论文创新不在于并列堆放密码算法，而在于将无人系统任务中的端点可信、身份认证、会话密钥、载荷数据与转发路径，组织为按依赖关系推进的一条安全链。
+        </p>
+        <div class="innovation-flow" aria-label="TrustLink 连续安全链">
+          <div class="flow-step"><span>端点</span><b>可信</b><small>TEE 认证流程</small></div>
+          <div class="flow-step"><span>身份</span><b>已认证</b><small>SRP-PAKE</small></div>
+          <div class="flow-step"><span>密钥</span><b>端到端</b><small>X3DH 协商</small></div>
+          <div class="flow-step"><span>载荷</span><b>可验证</b><small>加密、认证、防重放</small></div>
+          <div class="flow-step"><span>路径</span><b>最小知情</b><small>VRF + AKE + 洋葱转发</small></div>
+        </div>
+      </section>
+
+      <section class="section innovation-section">
+        <div class="section-head">
+          <h2>六项论文创新</h2>
+          <p>每项机制都对应无人系统部署中的一个具体风险，并能落到同一条数传、图传和转发工作流中。</p>
+        </div>
+
+        <div class="innovation-grid innovation-grid-dense">
+          <article class="card innovation-card">
+            <div class="tag">CONTINUOUS SECURITY</div>
+            <h3>五环连续安全链</h3>
+            <p>以设备、身份、密钥、数据、路径五个安全条件串联状态机；前一阶段未通过，后续密钥协商和载荷传输不会启动。</p>
+            <div class="innovation-proof">TEE → SRP-PAKE → X3DH → 数据保护 → 路径保护</div>
+          </article>
+
+          <article class="card innovation-card">
+            <div class="tag">STATE BINDING</div>
+            <h3>认证结果绑定身份材料</h3>
+            <p>SRP-PAKE 生成的 K_SRP 用于保护 X3DH 身份公钥和预密钥束，使正确口令、身份密钥与最终会话密钥形成连续约束。</p>
+            <div class="innovation-proof">未完成 SRP 认证，X3DH 身份材料不进入明文交换</div>
+          </article>
+
+          <article class="card innovation-card">
+            <div class="tag">PATH FIRST</div>
+            <h3>先建路径，再承载握手</h3>
+            <p>多基站场景先由 VRF 选路、每跳 AKE 建立密钥与洋葱电路，再在其中执行四阶段握手，避免中继直接看到认证协商材料。</p>
+            <div class="innovation-proof">VRF 选择 + 本跳密钥 + 端点预保护 K_EO</div>
+          </article>
+
+          <article class="card innovation-card">
+            <div class="tag">PATH-BOUND DATA</div>
+            <h3>路径绑定的双层保护</h3>
+            <p>端点密钥 K_X3DH 保护业务明文，K_path 再绑定电路编号和路径承诺。路径切换后，外层保护上下文必须重新派生。</p>
+            <div class="innovation-proof">K_path = HKDF(K_X3DH, cid, path_commit)</div>
+          </article>
+
+          <article class="card innovation-card">
+            <div class="tag">HYBRID RELAY</div>
+            <h3>弱覆盖下的混合安全接力</h3>
+            <p>将基站、无人机与地面机器人统一纳入候选图，综合可达性、带宽、时延、丢包、电量、可信度和节点类型选择安全可达路径。</p>
+            <div class="innovation-proof">固定节点优先稳定；覆盖不足时允许移动中继补位</div>
+          </article>
+
+          <article class="card innovation-card">
+            <div class="tag">ENGINEERING EVIDENCE</div>
+            <h3>协议机制进入独立节点</h3>
+            <p>数传、图传、目录、地面站和中继被拆为可运行模块。中继仅保存电路号、本跳密钥与下一跳状态，不保存完整路径或端到端密钥。</p>
+            <div class="innovation-proof">数传保留 ACK；图传使用低延迟连续发送模式</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section innovation-section">
+        <div class="section-head">
+          <h2>原型验证覆盖什么</h2>
+          <p>页面保留论文中可追溯的测试事实，并区分真实跨网接入、协议层多跳和混合路径规划验证。</p>
+        </div>
+
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <span>四阶段直连图传</span>
+            <b>27.8 fps</b>
+            <p>320 x 240 测试分辨率下的平均值；安全会话建立耗时为 1.97 s。</p>
+          </article>
+          <article class="evidence-card">
+            <span>协议层三跳数传</span>
+            <b>85 / 85</b>
+            <p>R1、R2、R3 独立中继进程转发，地面站接收的样本均通过 MAC 与时间戳校验。</p>
+          </article>
+          <article class="evidence-card">
+            <span>混合路径规划</span>
+            <b>base → uav → base</b>
+            <p>验证固定基站与无人机中继组成的候选路径、可验证选路和后续安全建链。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section innovation-section innovation-boundary">
+        <div class="highlight">
+          <h3>论文验证边界</h3>
+          <p>当前 TEE 为模拟远程认证流程；多基站测试验证的是独立中继进程上的协议层多跳，不等同于多台物理基站外场无线链路。论文结果证明原型的协议与工程可行性，不将其表述为已完成的大规模生产部署。</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>TrustLink 论文创新与原型验证</div>
+        <div>连续安全链 / 路径隐私 / 弱覆盖安全接力</div>
+      </footer>
+    </main>
+  </body>
+</html>

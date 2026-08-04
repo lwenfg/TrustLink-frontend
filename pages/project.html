@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作品介绍 | TrustLink</title>
+    <meta name="description" content="TrustLink 无人系统载荷链路安全通信系统：端点可信、数据保护、路径隐私与弱覆盖安全接力。" />
+    <style>
+      :root {
+        --bg: #07111f;
+        --navy: #0b1e34;
+        --panel: rgba(8, 24, 43, 0.82);
+        --panel-soft: rgba(12, 33, 56, 0.7);
+        --line: rgba(145, 205, 255, 0.22);
+        --text: #eef7ff;
+        --muted: #aac0d6;
+        --cyan: #38d5ff;
+        --green: #7ef7c2;
+        --amber: #f7c35f;
+        --danger: #ff7d9d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          linear-gradient(90deg, rgba(4, 11, 24, 0.72), rgba(5, 21, 38, 0.56)),
+          linear-gradient(180deg, rgba(7, 17, 31, 0.08) 0%, rgba(7, 17, 31, 0.5) 100%),
+          url("../assets/images/UAV.jpg") center / cover fixed no-repeat,
+          var(--bg);
+        font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .nav {
+        position: fixed;
+        z-index: 20;
+        inset: 0 0 auto;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(5, 14, 27, 0.78);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav-inner {
+        width: min(1180px, calc(100% - 40px));
+        height: 72px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 850;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid rgba(56, 213, 255, 0.5);
+        background: rgba(56, 213, 255, 0.13);
+        box-shadow: 0 0 26px rgba(56, 213, 255, 0.18);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a,
+      .nav-dropdown summary {
+        padding: 9px 12px;
+        border-radius: 8px;
+        color: rgba(238, 247, 255, 0.8);
+        font-size: 14px;
+      }
+
+      .nav-links a:hover,
+      .nav-links .active,
+      .nav-dropdown summary:hover,
+      .nav-dropdown[open] summary {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .nav-dropdown {
+        position: relative;
+      }
+
+      .nav-dropdown summary {
+        display: block;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .nav-dropdown summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .nav-menu {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 10px);
+        left: 0;
+        min-width: 150px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(5, 14, 27, 0.96);
+        box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+      }
+
+      .nav-menu a {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 116px 0 64px;
+      }
+
+      .hero {
+        min-height: 560px;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        align-items: center;
+        gap: 42px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 13px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #dff4ff;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 18px rgba(126, 247, 194, 0.75);
+      }
+
+      h1 {
+        margin: 22px 0 0;
+        font-size: clamp(42px, 6vw, 76px);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.8;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 34px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 20px;
+        border-radius: 8px;
+        font-weight: 850;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .btn-primary {
+        color: #03101f;
+        background: linear-gradient(135deg, #38d5ff, #7ef7c2);
+        box-shadow: 0 18px 42px rgba(56, 213, 255, 0.22);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .hero-panel,
+      .card,
+      .image-panel,
+      .formula {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      }
+
+      .hero-panel {
+        padding: 24px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .metric {
+        min-height: 126px;
+        padding: 18px;
+        border: 1px solid rgba(145, 205, 255, 0.16);
+        border-radius: 8px;
+        background: rgba(2, 12, 24, 0.56);
+      }
+
+      .metric b {
+        display: block;
+        color: var(--cyan);
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .section {
+        padding: 58px 0;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 28px;
+        margin-bottom: 26px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        max-width: 720px;
+        font-size: clamp(30px, 4vw, 48px);
+        line-height: 1.1;
+      }
+
+      .section-head p {
+        max-width: 420px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .card .tag {
+        color: var(--cyan);
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .card h3 {
+        margin: 14px 0 10px;
+        font-size: 23px;
+      }
+
+      .card p,
+      .card li {
+        color: var(--muted);
+        line-height: 1.72;
+      }
+
+      .card ul {
+        margin: 14px 0 0;
+        padding-left: 18px;
+      }
+
+      .image-panel {
+        overflow: hidden;
+      }
+
+      .image-panel img {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+      }
+
+      .image-caption {
+        padding: 14px 18px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        background: rgba(3, 12, 24, 0.72);
+      }
+
+      .timeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .step {
+        display: grid;
+        grid-template-columns: 78px 1fr;
+        gap: 18px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-soft);
+      }
+
+      .step-no {
+        width: 58px;
+        height: 58px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        color: #03101f;
+        font-weight: 950;
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+      }
+
+      .step h3 {
+        margin: 0 0 8px;
+        font-size: 22px;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .formula {
+        padding: 18px 20px;
+        margin-top: 14px;
+        color: #def8ff;
+        font-family: Consolas, "Courier New", monospace;
+        line-height: 1.7;
+        overflow-x: auto;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+
+      .table th,
+      .table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(145, 205, 255, 0.16);
+        text-align: left;
+      }
+
+      .table th {
+        color: #fff;
+        background: rgba(56, 213, 255, 0.12);
+      }
+
+      .table td {
+        color: var(--muted);
+      }
+
+      .value {
+        color: var(--green);
+        font-weight: 850;
+      }
+
+      .footer {
+        padding: 28px 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      @media (max-width: 960px) {
+        .nav-inner {
+          height: auto;
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 16px 0;
+        }
+
+        .nav-links {
+          justify-content: flex-start;
+        }
+
+        .hero,
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding-top: 72px;
+        }
+
+        .section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100% - 28px, 1180px);
+        }
+
+        .metric-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .step {
+          grid-template-columns: 1fr;
+        }
+
+        .footer {
+          flex-direction: column;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/styles/theme.css" />
+  </head>
+  <body class="editorial-page project-page">
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-mark"></span>
+          <span>TrustLink</span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+          <a href="../index.html">首页</a>
+          <a href="data-video.html">数传图传</a>
+          <details class="nav-dropdown">
+            <summary>多基站</summary>
+            <div class="nav-menu">
+              <a href="multi-station.html?mode=simulation">多基站模拟</a>
+              <a href="multi-station.html?mode=real">多基站测试</a>
+              <a href="multi-station.html?mode=hybrid">混合多基站</a>
+            </div>
+          </details>
+          <a class="active" href="project.html">作品介绍</a>
+          <a href="innovation.html">创新点</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero project-hero">
+        <div class="project-hero-copy">
+          <h1>为无人系统载荷<br />建立可验证的安全链</h1>
+          <p class="lead">TrustLink 面向无人机、无人车与地面机器人在开放无线、跨网远控和弱覆盖环境中的通信风险，将可信接入、身份认证、端到端密钥、载荷保护与路径隐私组织为一套可运行的安全通信系统。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#architecture">系统架构</a>
+            <a class="btn btn-secondary" href="#evidence">运行表现</a>
+          </div>
+        </div>
+        <aside class="project-scope" aria-label="TrustLink 覆盖范围">
+          <div><span>TRUST</span><b>端点可信</b><p>接入证明与身份认证共同确认通信双方。</p></div>
+          <div><span>PAYLOAD</span><b>载荷保护</b><p>遥测、控制与视频在端点间加密认证。</p></div>
+          <div><span>ROUTE</span><b>路径最小知情</b><p>中继只处理本跳转发，不见明文与全路径。</p></div>
+        </aside>
+      </section>
+
+      <section class="section project-section" id="context">
+        <div class="section-head">
+          <h2>无人任务链路面临的是连续风险</h2>
+          <p>安全问题并不止于“把数据加密”。设备身份、密钥材料、中继可见范围和覆盖缺口都会决定一次任务是否可信完成。</p>
+        </div>
+        <div class="project-risk-grid">
+          <article class="card project-risk">
+            <span>01 / ENTRY</span>
+            <h3>未认证节点进入任务网</h3>
+            <p>仅依赖网络可达无法证明设备运行状态或操作者身份，伪造端点可能参与后续会话。</p>
+          </article>
+          <article class="card project-risk">
+            <span>02 / PAYLOAD</span>
+            <h3>任务数据被窥探、篡改或重放</h3>
+            <p>遥测位置、控制状态和视频载荷必须在传输前获得机密性、完整性和新鲜性保护。</p>
+          </article>
+          <article class="card project-risk">
+            <span>03 / RELAY</span>
+            <h3>中继转发暴露通信关系</h3>
+            <p>跨基站或临时节点接力时，单个中继不应获得端点握手材料、业务明文或完整路径。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section project-section" id="architecture">
+        <div class="section-head">
+          <h2>从地面控制台到无人端的完整系统架构</h2>
+          <p>作品由控制展示、安全协议、路径服务和终端执行四部分组成。各模块既能独立运行，也能沿同一条任务链路协同完成接入、建链、传输和状态呈现。</p>
+        </div>
+        <div class="project-architecture">
+          <div class="image-panel project-architecture-image">
+            <img src="../assets/images/report/architecture.png" alt="TrustLink 无人系统载荷链路安全通信架构图" />
+            <div class="image-caption">地面站与无人设备保持端到端安全关系；需要跨节点传输时，目录服务、路径选择和逐跳加密共同建立受保护的承载电路。</div>
+          </div>
+          <div class="project-system-stack" aria-label="TrustLink 系统组成">
+            <article>
+              <span>CONTROL &amp; VIEW</span>
+              <h3>地面控制与展示</h3>
+              <p>统一启动数传、图传和安全会话，持续呈现飞行遥测、视频画面、连接状态与中继路径。</p>
+            </article>
+            <article>
+              <span>SECURE SESSION</span>
+              <h3>安全协议编排</h3>
+              <p>按顺序完成接入证明、SRP-PAKE 身份认证、X3DH 密钥协商和应用载荷保护。</p>
+            </article>
+            <article>
+              <span>PATH SERVICE</span>
+              <h3>目录与路径服务</h3>
+              <p>维护可用节点信息，综合链路质量与节点状态选择路径，并为每一跳建立独立密钥。</p>
+            </article>
+            <article>
+              <span>EDGE &amp; RELAY</span>
+              <h3>无人端与中继执行</h3>
+              <p>无人端采集遥测和视频，中继节点只解开本跳封装并转发，端到端载荷始终保持受保护状态。</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="project-mission-flow" aria-label="一次安全通信任务的运行流程">
+          <div class="project-flow-title">
+            <h3>一次安全通信任务如何运行</h3>
+            <p>从操作者发起任务，到无人端数据回传，安全状态与业务数据沿同一条链路推进。</p>
+          </div>
+          <ol>
+            <li><b>发起任务</b><span>地面控制台选择直连、多基站或混合节点模式，并启动对应的数传与图传服务。</span></li>
+            <li><b>确认端点</b><span>双方先校验接入证明，再通过口令认证建立只属于本次会话的身份上下文。</span></li>
+            <li><b>建立通道</b><span>直连模式生成端到端密钥；多跳模式同时完成路径选择、逐跳协商与洋葱电路构建。</span></li>
+            <li><b>保护载荷</b><span>遥测、控制和视频在发送前完成加密与完整性认证，序列号和时间戳用于识别重放。</span></li>
+            <li><b>呈现状态</b><span>地面端解密有效数据，并将链路、遥测、图传和路径信息同步到 Web 控制台。</span></li>
+          </ol>
+        </div>
+
+        <div class="project-architecture-details">
+          <article>
+            <span>数据流</span>
+            <h3>业务数据先保护，再进入网络</h3>
+            <p>遥测、控制指令与视频帧在端点完成加密认证。无论中间经过固定基站、无人机还是地面机器人，中继看到的都只是受保护载荷。</p>
+          </article>
+          <article>
+            <span>密钥流</span>
+            <h3>端到端密钥与逐跳密钥分工</h3>
+            <p>端到端密钥负责保护真实业务内容，逐跳密钥负责隐藏路径上的转发关系；路径变化后重新绑定会话与电路上下文。</p>
+          </article>
+          <article>
+            <span>状态流</span>
+            <h3>安全结果回到统一控制台</h3>
+            <p>连接结果、协议阶段、遥测数据、视频状态和实际中继路径被集中展示，让操作者能直接检查当前链路是否可用、可信、连续。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section project-section" id="protocols">
+        <div class="section-head">
+          <h2>按任务路径推进安全状态</h2>
+          <p>系统先建立端点安全根，再根据网络条件选择直连、跨基站或混合接力的承载路径。</p>
+        </div>
+        <div class="project-capability-grid">
+          <article class="card project-capability">
+            <div class="project-capability-top"><span>DIRECT LINK</span><b>端点安全根</b></div>
+            <h3>四阶段端到端协议</h3>
+            <p>状态机依次完成可信接入证明校验、SRP-PAKE、SRP 保护的 X3DH 身份材料交换与应用层数据保护。任一阶段失败，临时状态和密钥材料会被清除。</p>
+            <div class="project-proof">接入证明 → SRP-PAKE → X3DH → SM4/SM3 + 序列号 + 时间戳</div>
+          </article>
+          <article class="card project-capability">
+            <div class="project-capability-top"><span>MULTI-HOP</span><b>跨站路径隐私</b></div>
+            <h3>先建电路，再承载握手</h3>
+            <p>源端从目录筛选候选中继，经 VRF 生成可验证路径，与每一跳执行 ntor 风格 AKE，随后建立洋葱电路并在其中完成四阶段握手。</p>
+            <div class="project-proof">目录过滤 → VRF 选路 → 每跳 AKE → K_EO 预保护 → 洋葱转发</div>
+          </article>
+          <article class="card project-capability">
+            <div class="project-capability-top"><span>WEAK COVERAGE</span><b>弱覆盖安全接力</b></div>
+            <h3>基站与无人节点混合转发</h3>
+            <p>固定基站、无人机和地面机器人共同组成候选图，路径评分综合可达性、带宽、RTT、丢包、电量、可信度与节点类型。</p>
+            <div class="project-proof">固定节点优先稳定；覆盖不足时由可信移动中继补位</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section project-section">
+        <div class="section-head">
+          <h2>协议图：内层端点保护，外层路径保护</h2>
+          <p>两套协议按先后关系工作：多跳场景先完成可验证路径建链，再在受保护电路中传递端点认证与载荷数据。</p>
+        </div>
+        <div class="project-flow-gallery">
+          <figure class="image-panel">
+            <img src="../assets/images/report/four-stage-flow.png" alt="TrustLink 四阶段端到端安全协议流程图" />
+            <figcaption class="image-caption"><b>内层安全通道</b>：设备可信、身份认证、会话密钥和应用数据按顺序绑定。</figcaption>
+          </figure>
+          <figure class="image-panel">
+            <img src="../assets/images/report/multi-station-flow.png" alt="TrustLink 多基站 VRF 加 AKE 洋葱建链流程图" />
+            <figcaption class="image-caption"><b>外层安全路径</b>：中继仅保存本跳密钥与邻接转发状态，端点才拥有完整安全上下文。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section project-section" id="evidence">
+        <div class="section-head">
+          <h2>系统运行表现</h2>
+          <p>从安全会话建立、实时图传到三跳遥测和混合路径规划，关键链路均可在展示平台中直观看到。</p>
+        </div>
+        <div class="project-evidence-grid">
+          <article><span>四阶段直连图传</span><b>1.97 s</b><p>安全会话建立耗时。</p></article>
+          <article><span>320 x 240 图传</span><b>27.8 fps</b><p>63.2 s 内发送 1757 帧的平均值。</p></article>
+          <article><span>协议层三跳数传</span><b>85 / 85</b><p>遥测样本均通过 MAC 与时间戳校验。</p></article>
+          <article><span>三跳低延迟图传</span><b>约 28.7 fps</b><p>地面站解密后的前端滑动窗口统计。</p></article>
+          <article><span>混合路径规划</span><b>base → uav → base</b><p>验证固定基站和无人机中继共同参与建链。</p></article>
+        </div>
+      </section>
+
+      <section class="section project-section project-boundary">
+        <div class="project-boundary-grid">
+          <div>
+            <span>UNIFIED DEMONSTRATION</span>
+            <h2>一套平台串联完整的无人系统安全通信任务</h2>
+          </div>
+          <div class="project-entry-list">
+            <a href="data-video.html"><b>数传图传</b><span>查看端到端安全会话、遥测数据与实时视频。</span></a>
+            <a href="multi-station.html?mode=simulation"><b>多基站链路</b><span>查看目录选路、逐跳建链和洋葱转发过程。</span></a>
+            <a href="multi-station.html?mode=hybrid"><b>混合节点接力</b><span>查看固定基站与无人节点共同参与的弱覆盖路径。</span></a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>TrustLink 作品介绍</div>
+        <div>端点可信 / 载荷保护 / 路径最小知情 / 弱覆盖接力</div>
+      </footer>
+    </main>
+  </body>
+</html>

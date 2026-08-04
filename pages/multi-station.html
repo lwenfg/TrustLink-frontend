@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>多基站模拟 | TrustLink</title>
+    <meta name="description" content="TrustLink 多基站模拟数传与图传展示前端页面" />
+    <style>
+      :root {
+        --bg: #061018;
+        --panel: rgba(9, 23, 39, 0.88);
+        --panel-strong: rgba(6, 18, 31, 0.96);
+        --line: rgba(145, 205, 255, 0.22);
+        --text: #eef7ff;
+        --muted: #a8bfd6;
+        --cyan: #38d5ff;
+        --green: #7ef7c2;
+        --amber: #f7c35f;
+        --red: #ff7c8f;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          linear-gradient(90deg, rgba(4, 11, 24, 0.72), rgba(5, 21, 38, 0.56)),
+          linear-gradient(180deg, rgba(7, 17, 31, 0.08) 0%, rgba(7, 17, 31, 0.5) 100%),
+          url("../assets/images/UAV.jpg") center / cover fixed no-repeat,
+          var(--bg);
+        font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      .nav {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 20;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(5, 14, 27, 0.8);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav-inner {
+        width: min(1240px, calc(100% - 40px));
+        min-height: 72px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 850;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid rgba(56, 213, 255, 0.5);
+        background: linear-gradient(135deg, rgba(56, 213, 255, 0.22), rgba(126, 247, 194, 0.14));
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a,
+      .nav-dropdown summary {
+        padding: 9px 12px;
+        border-radius: 8px;
+        color: rgba(238, 247, 255, 0.8);
+        font-size: 14px;
+      }
+
+      .nav-links a:hover,
+      .nav-links .active,
+      .nav-dropdown summary:hover,
+      .nav-dropdown[open] summary {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .nav-dropdown {
+        position: relative;
+      }
+
+      .nav-dropdown summary {
+        display: block;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .nav-dropdown summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .nav-menu {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 10px);
+        left: 0;
+        min-width: 150px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(5, 14, 27, 0.96);
+        box-shadow: 0 18px 46px rgba(0, 0, 0, 0.32);
+      }
+
+      .nav-menu a {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .page {
+        width: min(1240px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 116px 0 64px;
+      }
+
+      .hero {
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 13px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #dff4ff;
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 18px rgba(126, 247, 194, 0.75);
+      }
+
+      h1 {
+        margin: 18px 0 0;
+        font-size: clamp(40px, 5.2vw, 66px);
+        line-height: 1.04;
+      }
+
+      .lead {
+        max-width: 820px;
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.74;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 22px 0 18px;
+      }
+
+      .btn {
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .btn {
+        min-height: 42px;
+        padding: 0 18px;
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+        color: #03101f;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .btn.secondary {
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text);
+      }
+
+      .btn:disabled {
+        cursor: wait;
+        opacity: 0.62;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.24);
+        overflow: hidden;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .panel-desc {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(56, 213, 255, 0.32);
+        background: rgba(56, 213, 255, 0.12);
+        color: #d9f8ff;
+        font-size: 12px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .telemetry-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        padding: 18px;
+      }
+
+      .metric {
+        min-height: 96px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-strong);
+        padding: 14px;
+      }
+
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .metric b {
+        display: block;
+        margin-top: 10px;
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .metric small {
+        display: block;
+        margin-top: 6px;
+        color: rgba(238, 247, 255, 0.62);
+      }
+
+      .video-area {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .video-shell {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        min-height: 430px;
+        max-height: min(68vh, 620px);
+        border: 1px solid rgba(145, 205, 255, 0.18);
+        border-radius: 8px;
+        background:
+          linear-gradient(rgba(56, 213, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(56, 213, 255, 0.08) 1px, transparent 1px),
+          #02060c;
+        background-size: 42px 42px;
+        overflow: hidden;
+      }
+
+      .video-shell img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+
+      .video-shell.connected img {
+        display: block;
+      }
+
+      .video-shell.snow-mode img,
+      .video-shell.snow-mode .video-placeholder {
+        display: none;
+      }
+
+      .video-shell.snow-mode.connected img {
+        display: block;
+      }
+
+      .video-placeholder {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 28px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .video-shell.connected .video-placeholder {
+        display: none;
+      }
+
+      .snow-screen {
+        position: absolute;
+        inset: 0;
+        display: none;
+        overflow: hidden;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          #080a0c;
+        background-size: 24px 24px;
+      }
+
+      .snow-screen::before {
+        content: "";
+        position: absolute;
+        inset: 46% 28%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .snow-screen::after {
+        content: none;
+      }
+
+      .snow-label {
+        position: absolute;
+        inset: 50% auto auto 50%;
+        z-index: 2;
+        transform: translate(-50%, -50%);
+        padding: 9px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        background: rgba(2, 7, 13, 0.74);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .video-shell.snow-mode .snow-screen,
+      .video-card.snow-mode .snow-screen {
+        display: block;
+      }
+
+      .video-shell.snow-mode.connected .snow-screen,
+      .video-card.snow-mode.connected .snow-screen {
+        display: none;
+      }
+
+      .reticle {
+        width: min(360px, 70%);
+        aspect-ratio: 1;
+        margin: 0 auto 18px;
+        border: 1px solid rgba(56, 213, 255, 0.48);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 0 38px rgba(56, 213, 255, 0.16);
+      }
+
+      .reticle::before {
+        content: "VIDEO LINK";
+        color: rgba(238, 247, 255, 0.86);
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .video-note {
+        max-width: 520px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .video-overlay {
+        position: absolute;
+        inset: 14px 14px auto 14px;
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .overlay-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: rgba(3, 10, 20, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .video-cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .video-card {
+        min-height: 132px;
+        border: 1px solid rgba(145, 205, 255, 0.18);
+        border-radius: 8px;
+        background:
+          linear-gradient(rgba(56, 213, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(56, 213, 255, 0.08) 1px, transparent 1px),
+          var(--panel-strong);
+        background-size: 28px 28px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .video-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+        opacity: 0.92;
+      }
+
+      .video-card.connected img {
+        display: block;
+      }
+
+      .video-card.snow-mode img {
+        display: none;
+      }
+
+      .video-card.snow-mode.connected img {
+        display: block;
+      }
+
+      .video-card.active {
+        outline: 1px solid rgba(126, 247, 194, 0.5);
+        box-shadow: 0 0 0 1px rgba(126, 247, 194, 0.18) inset;
+      }
+
+      .video-card-label {
+        position: absolute;
+        inset: auto auto 10px 10px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(3, 10, 20, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .video-card-meta {
+        position: absolute;
+        inset: auto 10px 10px auto;
+        color: rgba(238, 247, 255, 0.72);
+        font-size: 12px;
+      }
+
+      .footer-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .footer-item {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 14px 16px;
+      }
+
+      .footer-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .footer-item b {
+        display: block;
+        margin-top: 8px;
+        font-size: 20px;
+      }
+
+      .log-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .log-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        padding: 12px 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 1100px) {
+        .video-area {
+          grid-template-columns: 1fr;
+        }
+
+        .telemetry-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .video-cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .footer-strip {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .nav-inner,
+        .page {
+          width: min(100% - 28px, 1240px);
+        }
+
+        .telemetry-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .video-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .video-shell {
+          min-height: 260px;
+          max-height: none;
+        }
+
+        .footer-strip {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 34px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/styles/theme.css" />
+  </head>
+  <body class="console-page">
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-mark"></span>
+          <span>TrustLink</span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+          <a href="../index.html">首页</a>
+          <a href="data-video.html">数传图传</a>
+          <details class="nav-dropdown">
+            <summary class="active">多基站</summary>
+            <div class="nav-menu">
+              <a class="active" data-mode="simulation" href="multi-station.html?mode=simulation">多基站模拟</a>
+              <a data-mode="real" href="multi-station.html?mode=real">多基站测试</a>
+              <a data-mode="hybrid" href="multi-station.html?mode=hybrid">混合多基站</a>
+            </div>
+          </details>
+          <a href="project.html">作品介绍</a>
+          <a href="innovation.html">创新点</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div>
+          <div class="eyebrow" id="modeEyebrow">Multi-Station Console</div>
+          <h1 id="pageTitle">多基站统一控制台</h1>
+          <p class="lead" id="pageLead">
+            页面用于展示多基站场景下的遥测数传、图传主画面，以及基站1、基站2、基站3三路视角切换。
+          </p>
+        </div>
+      </section>
+
+      <div class="toolbar">
+        <button class="btn" id="startDataBtn" type="button">启动数传服务</button>
+        <button class="btn" id="startVideoBtn" type="button">启动图传服务</button>
+        <button class="btn secondary" id="connectBtn" type="button">建立连接</button>
+      </div>
+
+      <section class="grid">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">数传遥测</h2>
+              <p class="panel-desc">这里展示多基站修订版地面站解密后的实时遥测数据，数据来自 5050 遥测接口。</p>
+            </div>
+            <span class="pill" id="telemetryPill">WAITING</span>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="metric"><span>纬度 Latitude</span><b id="lat">0.000000</b><small>deg</small></div>
+            <div class="metric"><span>经度 Longitude</span><b id="lon">0.000000</b><small>deg</small></div>
+            <div class="metric"><span>高度 Altitude</span><b id="alt">0.00</b><small>m</small></div>
+            <div class="metric"><span>航向 Heading</span><b id="heading">000</b><small>deg</small></div>
+            <div class="metric"><span>俯仰 Pitch</span><b id="pitch">0.000</b><small>rad</small></div>
+            <div class="metric"><span>横滚 Roll</span><b id="roll">0.000</b><small>rad</small></div>
+            <div class="metric"><span>地速 Groundspeed</span><b id="groundspeed">0.00</b><small>m/s</small></div>
+            <div class="metric"><span>空速 Airspeed</span><b id="airspeed">0.00</b><small>m/s</small></div>
+            <div class="metric"><span>电池电压</span><b id="batteryVoltage">0.00</b><small>V</small></div>
+            <div class="metric"><span>电池电量</span><b id="batteryLevel">0.0</b><small>%</small></div>
+            <div class="metric"><span>GPS 卫星数</span><b id="satellites">0</b><small>visible</small></div>
+            <div class="metric"><span>飞行模式</span><b id="mode">--</b><small id="armed">--</small></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">图传监控</h2>
+              <p class="panel-desc" id="videoDesc">主预览区显示 8080 图传服务的视频流，下方小窗可切换地面站、基站1、基站2、基站3。</p>
+            </div>
+            <span class="pill" id="videoPill">WAITING</span>
+          </div>
+
+          <div class="video-area">
+            <div class="video-shell" id="videoShell">
+              <img id="mainVideo" alt="多基站主视频画面" />
+              <div class="snow-screen" id="mainSnow"><span class="snow-label" id="mainSnowLabel">CIPHERTEXT VIEW</span></div>
+              <div class="video-placeholder">
+                <div>
+                  <div class="reticle"></div>
+                  <p class="video-note">
+                    连接建立后显示多基站图传画面；下方小窗用于切换地面站与各基站视角。
+                  </p>
+                </div>
+              </div>
+              <div class="video-overlay">
+                <span class="overlay-chip" id="mainLabel">BASE STATION 1 / PREVIEW</span>
+                <span class="overlay-chip" id="clock">--:--:--</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="video-cards" id="viewCards" aria-label="图传视角切换"></div>
+        </article>
+      </section>
+
+      <section class="footer-strip">
+        <div class="footer-item"><span>主预览状态</span><b id="previewState">基站1</b></div>
+        <div class="footer-item"><span>当前画面</span><b id="frameMode">链路示意图</b></div>
+        <div class="footer-item"><span>刷新时间</span><b id="updateTime">--:--:--</b></div>
+        <div class="footer-item"><span>连接状态</span><b id="connectionState">未连接</b></div>
+      </section>
+
+      <div class="log-list" id="logs" aria-label="前端日志">
+        <div class="log-item"><span>页面启动</span><span>多基站展示前端已加载</span></div>
+      </div>
+    </main>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get("mode") || "simulation";
+      const backendHost = window.location.hostname || "127.0.0.1";
+
+      let config = null;
+      let views = [];
+      let activeView = null;
+      let connected = false;
+      let telemetryTimer = null;
+      let statusTimer = null;
+      let videoCandidates = [];
+      let videoCandidateIndex = 0;
+      let lastTelemetryEndpoint = "";
+      let hasRealTelemetry = false;
+
+      function fmt(value, digits) {
+        return Number(value).toFixed(digits);
+      }
+
+      function addLog(left, right) {
+        const item = document.createElement("div");
+        item.className = "log-item";
+        item.innerHTML = `<span>${left}</span><span>${right}</span>`;
+        const logs = $("logs");
+        logs.prepend(item);
+        while (logs.children.length > 6) logs.removeChild(logs.lastChild);
+      }
+
+      function updateClock() {
+        const text = new Date().toLocaleTimeString("zh-CN", { hour12: false });
+        $("clock").textContent = text;
+        $("updateTime").textContent = text;
+      }
+
+      function fallbackConfig() {
+        return {
+          ok: true,
+          mode: "simulation",
+          implemented: true,
+          title: "多基站模拟数传与图传展示",
+          eyebrow: "Multi-Station Simulation",
+          lead: "页面由展示配置驱动：地面站接入正确解密图传，基站1、基站2、基站3展示线路上可观察到的原始密文视角。",
+          telemetryUrls: [
+            `http://${backendHost}:5050/api/telemetry`,
+            "http://127.0.0.1:5050/api/telemetry",
+            "/api/telemetry"
+          ],
+          videoStatusUrls: [
+            `http://${backendHost}:8080/api/status`,
+            `http://${backendHost}:8080/api/stats`,
+            "http://127.0.0.1:8080/api/status",
+            "http://127.0.0.1:8080/api/stats",
+            "/api/status",
+            "/api/stats"
+          ],
+          launcherUrls: {
+            data: ["/start/data", `http://${backendHost}:7000/start/data`, "http://127.0.0.1:7000/start/data"],
+            video: ["/start/video", `http://${backendHost}:7000/start/video`, "http://127.0.0.1:7000/start/video"]
+          },
+          views: [
+            {
+              id: "ground",
+              name: "地面站",
+              label: "GROUND STATION / LIVE",
+              pill: "GROUND STATION",
+              kind: "stream",
+              frameMode: "地面站解密画面",
+              streamUrls: [`http://${backendHost}:8080/video_feed`, "http://127.0.0.1:8080/video_feed", "/video_feed"]
+            },
+            { id: "r1", name: "基站1", label: "BASE STATION 1 / CIPHERTEXT", pill: "BASE STATION 1", kind: "ciphertext", frameMode: "基站1密文视角", streamUrls: [`http://${backendHost}:8080/video_feed/R1`, "http://127.0.0.1:8080/video_feed/R1", "/video_feed/R1"] },
+            { id: "r2", name: "基站2", label: "BASE STATION 2 / CIPHERTEXT", pill: "BASE STATION 2", kind: "ciphertext", frameMode: "基站2密文视角", streamUrls: [`http://${backendHost}:8080/video_feed/R2`, "http://127.0.0.1:8080/video_feed/R2", "/video_feed/R2"] },
+            { id: "r3", name: "基站3", label: "BASE STATION 3 / CIPHERTEXT", pill: "BASE STATION 3", kind: "ciphertext", frameMode: "基站3密文视角", streamUrls: [`http://${backendHost}:8080/video_feed/R3`, "http://127.0.0.1:8080/video_feed/R3", "/video_feed/R3"] }
+          ]
+        };
+      }
+
+      async function loadDisplayConfig() {
+        const urls = [
+          `/api/display-config?mode=${encodeURIComponent(mode)}`,
+          `http://${backendHost}:7000/api/display-config?mode=${encodeURIComponent(mode)}`,
+          `http://127.0.0.1:7000/api/display-config?mode=${encodeURIComponent(mode)}`
+        ];
+        try {
+          const { data } = await fetchFirstJson(urls);
+          return data.ok ? data : fallbackConfig();
+        } catch (error) {
+          addLog("展示配置未同步", "使用本地模拟配置");
+          return fallbackConfig();
+        }
+      }
+
+      async function fetchFirstJson(urls) {
+        let lastError = null;
+        for (const url of urls) {
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) throw new Error(`${url} ${res.status}`);
+            return { url, data: await res.json() };
+          } catch (error) {
+            lastError = error;
+          }
+        }
+        throw lastError || new Error("no endpoint available");
+      }
+
+      async function postFirstEndpoint(urls) {
+        let lastError = null;
+        for (const url of urls) {
+          try {
+            const res = await fetch(url, { method: "POST", cache: "no-store" });
+            if (!res.ok) throw new Error(`${url} ${res.status}`);
+            return url;
+          } catch (error) {
+            lastError = error;
+          }
+        }
+        throw lastError || new Error("no launcher available");
+      }
+
+      async function requestServiceStart(kind) {
+        const config = {
+          data: {
+            button: $("startDataBtn"),
+            defaultText: "启动数传服务",
+            pendingText: "正在启动数传",
+            successLog: "数传服务启动指令已发送",
+            failureLog: "数传启动控制接口未连接",
+            stateTarget: "telemetryPill"
+          },
+          video: {
+            button: $("startVideoBtn"),
+            defaultText: "启动图传服务",
+            pendingText: "正在启动图传",
+            successLog: "图传服务启动指令已发送",
+            failureLog: "图传启动控制接口未连接",
+            stateTarget: "videoPill"
+          }
+        }[kind];
+
+        if (!config) return;
+
+        config.button.disabled = true;
+        config.button.textContent = config.pendingText;
+        $(config.stateTarget).textContent = "STARTING";
+
+        try {
+          const url = await postFirstEndpoint(configData().launcherUrls[kind]);
+          addLog(config.successLog, url.includes("7000") ? "本机启动器" : "当前服务");
+          config.button.textContent = "启动指令已发送";
+        } catch (error) {
+          addLog(config.failureLog, "请先运行多基站修订 ground_launcher.py");
+          config.button.textContent = config.defaultText;
+          $(config.stateTarget).textContent = connected ? "ACTIVE" : "WAITING";
+        } finally {
+          setTimeout(() => {
+            config.button.disabled = false;
+            config.button.textContent = config.defaultText;
+          }, 1200);
+        }
+      }
+
+      function configData() {
+        return config || fallbackConfig();
+      }
+
+      function valueFrom(data, ...keys) {
+        for (const key of keys) {
+          if (data && data[key] !== undefined && data[key] !== null) {
+            return data[key];
+          }
+        }
+        return null;
+      }
+
+      function applyTelemetry(payload) {
+        const telemetry = payload.telemetry || payload;
+        if (!telemetry) return;
+
+        const lat = valueFrom(telemetry, "lat", "latitude", "global_lat");
+        const lon = valueFrom(telemetry, "lon", "lng", "longitude", "global_lon");
+        const alt = valueFrom(telemetry, "alt", "altitude", "global_alt", "relative_alt");
+        const heading = valueFrom(telemetry, "heading", "yaw_deg");
+        const pitch = valueFrom(telemetry, "pitch");
+        const roll = valueFrom(telemetry, "roll");
+        const groundspeed = valueFrom(telemetry, "groundspeed", "ground_speed");
+        const airspeed = valueFrom(telemetry, "airspeed", "air_speed");
+        const voltage = valueFrom(telemetry, "battery_voltage", "voltage");
+        const level = valueFrom(telemetry, "battery_level", "battery");
+        const satellites = valueFrom(telemetry, "satellites", "gps_satellites", "satellites_visible");
+        const mode = valueFrom(telemetry, "mode");
+        const armed = valueFrom(telemetry, "armed");
+
+        const hasValidLat = lat !== null && Math.abs(Number(lat)) > 0.000001;
+        const hasValidLon = lon !== null && Math.abs(Number(lon)) > 0.000001;
+        if (hasValidLat) $("lat").textContent = fmt(lat, 6);
+        if (hasValidLon) $("lon").textContent = fmt(lon, 6);
+        if (alt !== null) $("alt").textContent = fmt(alt, 2);
+        if (heading !== null) $("heading").textContent = String(Math.round(Number(heading))).padStart(3, "0");
+        if (pitch !== null) $("pitch").textContent = fmt(pitch, 3);
+        if (roll !== null) $("roll").textContent = fmt(roll, 3);
+        if (groundspeed !== null) $("groundspeed").textContent = fmt(groundspeed, 2);
+        if (airspeed !== null) $("airspeed").textContent = fmt(airspeed, 2);
+        if (voltage !== null) $("batteryVoltage").textContent = fmt(voltage, 2);
+        if (level !== null) $("batteryLevel").textContent = fmt(level, 1);
+        if (satellites !== null) $("satellites").textContent = String(satellites);
+        if (mode !== null) $("mode").textContent = String(mode);
+        if (armed !== null) $("armed").textContent = armed ? "ARMED" : "DISARMED";
+
+        hasRealTelemetry = true;
+        $("telemetryPill").textContent = "LIVE";
+        $("connectionState").textContent = "已连接";
+      }
+
+      async function pollTelemetry() {
+        try {
+          const { url, data } = await fetchFirstJson(configData().telemetryUrls);
+          if (data.connected || data.telemetry || data.lat !== undefined) {
+            applyTelemetry(data);
+            if (lastTelemetryEndpoint !== url) {
+              lastTelemetryEndpoint = url;
+              addLog("数传遥测同步", url.includes("5050") ? "5050/api/telemetry" : "/api/telemetry");
+            }
+          }
+        } catch (error) {
+          $("telemetryPill").textContent = connected ? "WAITING" : $("telemetryPill").textContent;
+        }
+      }
+
+      async function pollVideoStatus() {
+        try {
+          const { data } = await fetchFirstJson(configData().videoStatusUrls);
+          const frames = valueFrom(data, "frames_received", "total_frames", "frames");
+          const fps = valueFrom(data, "fps", "realtime_fps");
+          const latency = valueFrom(data, "latency", "latency_ms");
+          if (frames !== null && Number(frames) > 0) {
+            $("videoShell").classList.add("connected");
+            $("connectionState").textContent = hasRealTelemetry ? "已连接" : "图传已连接";
+          }
+          if (activeView?.kind === "stream" && fps !== null && Number(fps) > 0) $("videoPill").textContent = `${Number(fps).toFixed(1)} FPS`;
+          if (activeView?.kind === "stream" && latency !== null) $("frameMode").textContent = `${activeView.frameMode} / ${Number(latency).toFixed(0)}ms`;
+        } catch (error) {
+          if (connected) addLog("图传状态未同步", "等待 8080 图传服务");
+        }
+      }
+
+      function renderViewCards() {
+        const cards = $("viewCards");
+        cards.innerHTML = "";
+        views.forEach((view) => {
+          const card = document.createElement("div");
+          const ciphertextView = isCiphertextView(view);
+          card.className = `video-card${ciphertextView ? " snow-mode" : ""}`;
+          card.dataset.view = view.id;
+          card.setAttribute("role", "button");
+          card.setAttribute("tabindex", "0");
+          card.innerHTML = `
+            <img alt="${view.name}预览" />
+            ${ciphertextView ? `<div class="snow-screen"><span class="snow-label">${view.name} / CIPHERTEXT</span></div>` : ""}
+            <div class="video-card-label">${view.name}</div>
+            <div class="video-card-meta">${ciphertextView ? "密文视角" : "实时图传"}</div>
+          `;
+          card.addEventListener("click", () => setActiveView(view.id));
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setActiveView(view.id);
+            }
+          });
+          cards.appendChild(card);
+        });
+      }
+
+      function isCiphertextView(view) {
+        return view?.kind === "ciphertext" || view?.kind === "snow";
+      }
+
+      function loadCardStream(card, view, candidateIndex = 0) {
+        const endpoints = view.streamUrls || [];
+        if (!connected || !endpoints[candidateIndex]) return;
+        const image = card.querySelector("img");
+        image.onload = () => card.classList.add("connected");
+        image.onerror = () => {
+          card.classList.remove("connected");
+          image.removeAttribute("src");
+          loadCardStream(card, view, candidateIndex + 1);
+        };
+        const url = endpoints[candidateIndex];
+        image.src = `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`;
+      }
+
+      function loadCardStreams() {
+        document.querySelectorAll(".video-card").forEach((card) => {
+          const view = views.find((item) => item.id === card.dataset.view);
+          if (view?.streamUrls?.length) loadCardStream(card, view);
+        });
+      }
+
+      function setActiveView(viewId) {
+        activeView = views.find((item) => item.id === viewId) || views[0];
+        if (!activeView) return;
+
+        $("mainLabel").textContent = activeView.label || activeView.name;
+        $("videoPill").textContent = connected && activeView.kind === "stream" ? "CONNECTING" : activeView.pill;
+        $("previewState").textContent = activeView.name;
+        $("frameMode").textContent = activeView.frameMode || activeView.name;
+        $("mainSnowLabel").textContent = `${activeView.name} / CIPHERTEXT`;
+
+        document.querySelectorAll(".video-card").forEach((card) => {
+          card.classList.toggle("active", card.dataset.view === activeView.id);
+        });
+
+        if (isCiphertextView(activeView)) {
+          $("videoShell").classList.add("snow-mode");
+          $("videoShell").classList.remove("connected");
+          $("mainVideo").removeAttribute("src");
+          if (connected) loadVideoForView(activeView);
+        } else {
+          $("videoShell").classList.remove("snow-mode");
+          if (connected) loadVideoForView(activeView);
+        }
+
+        addLog("图传视角切换", activeView.name);
+      }
+
+      function loadVideoForView(view) {
+        if (!view || !view.streamUrls?.length) return;
+        const endpoints = view.streamUrls || [];
+        videoCandidates = endpoints.map((url) => `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`);
+        videoCandidateIndex = 0;
+        $("videoShell").classList.remove("connected");
+        $("videoShell").classList.toggle("snow-mode", isCiphertextView(view));
+        $("mainVideo").src = videoCandidates[videoCandidateIndex];
+      }
+
+      function connect() {
+        connected = true;
+        $("telemetryPill").textContent = "ACTIVE";
+        $("videoPill").textContent = "CONNECTING";
+        $("connectionState").textContent = "连接中";
+        addLog("建立多基站载荷链路", "5050 遥测 / 8080 图传");
+        loadCardStreams();
+        if (activeView?.streamUrls?.length) {
+          loadVideoForView(activeView);
+        } else if (isCiphertextView(activeView)) {
+          $("videoPill").textContent = activeView.pill;
+          $("videoShell").classList.add("snow-mode");
+          $("connectionState").textContent = "密文视角";
+        }
+
+        clearInterval(telemetryTimer);
+        telemetryTimer = setInterval(pollTelemetry, 1000);
+        pollTelemetry();
+
+        clearInterval(statusTimer);
+        statusTimer = setInterval(pollVideoStatus, 3000);
+        pollVideoStatus();
+      }
+
+      $("mainVideo").addEventListener("load", () => {
+        if (!activeView?.streamUrls?.length) return;
+        $("videoShell").classList.add("connected");
+        $("videoShell").classList.toggle("snow-mode", isCiphertextView(activeView));
+        $("videoPill").textContent = activeView.pill;
+        $("connectionState").textContent = hasRealTelemetry ? "已连接" : "图传已连接";
+        addLog("图传视频流同步", activeView.name);
+      });
+
+      $("mainVideo").addEventListener("error", () => {
+        if (videoCandidateIndex < videoCandidates.length - 1) {
+          videoCandidateIndex += 1;
+          $("mainVideo").src = videoCandidates[videoCandidateIndex];
+          return;
+        }
+        $("videoShell").classList.remove("connected");
+        $("mainVideo").removeAttribute("src");
+        $("videoPill").textContent = isCiphertextView(activeView) ? "NO CIPHERTEXT" : "WAITING";
+        $("connectionState").textContent = hasRealTelemetry ? "数传已连接" : "等待连接";
+        addLog("视频流未同步", activeView?.name || "等待 8080/video_feed");
+      });
+
+      $("startDataBtn").addEventListener("click", () => requestServiceStart("data"));
+      $("startVideoBtn").addEventListener("click", () => requestServiceStart("video"));
+      $("connectBtn").addEventListener("click", connect);
+
+      async function init() {
+        updateClock();
+        config = await loadDisplayConfig();
+        views = Array.isArray(config.views) ? config.views : fallbackConfig().views;
+        $("modeEyebrow").textContent = config.eyebrow || "Multi-Station Console";
+        $("pageTitle").textContent = config.title || "多基站统一控制台";
+        $("pageLead").textContent = config.lead || "";
+        $("videoDesc").textContent = views.length > 1
+          ? "主预览区显示当前选中的视角，下方小窗由后端展示配置动态生成。"
+          : "主预览区显示当前模式的图传画面。";
+
+        document.querySelectorAll(".nav-menu a[data-mode]").forEach((link) => {
+          link.classList.toggle("active", link.dataset.mode === mode);
+        });
+
+        renderViewCards();
+        setActiveView(views[0]?.id);
+        addLog("展示配置", `${config.mode || mode} / ${views.length} 个视角`);
+        setInterval(updateClock, 1000);
+      }
+
+      init();
+    </script>
+  </body>
+</html>
