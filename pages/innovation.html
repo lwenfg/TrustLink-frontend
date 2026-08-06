@@ -440,7 +440,7 @@
             <div class="tag">CONTINUOUS SECURITY</div>
             <h3>五环连续安全链</h3>
             <p>以设备、身份、密钥、数据、路径五个安全条件串联状态机；前一阶段未通过，后续密钥协商和载荷传输不会启动。</p>
-            <div class="innovation-proof">TEE → SRP-PAKE → X3DH → 数据保护 → 路径保护</div>
+            <div class="innovation-proof">TEE -> SRP-PAKE -> X3DH -> 数据保护 -> 路径保护</div>
           </article>
 
           <article class="card innovation-card">
@@ -483,7 +483,7 @@
       <section class="section innovation-section">
         <div class="section-head">
           <h2>原型验证覆盖什么</h2>
-          <p>页面保留论文中可追溯的测试事实，并区分真实跨网接入、协议层多跳和混合路径规划验证。</p>
+          <p>区分真实跨网接入、协议层多跳和混合路径规划验证。</p>
         </div>
 
         <div class="evidence-grid">
@@ -499,16 +499,9 @@
           </article>
           <article class="evidence-card">
             <span>混合路径规划</span>
-            <b>base → uav → base</b>
+            <b>base -> uav -> base</b>
             <p>验证固定基站与无人机中继组成的候选路径、可验证选路和后续安全建链。</p>
           </article>
-        </div>
-      </section>
-
-      <section class="section innovation-section innovation-boundary">
-        <div class="highlight">
-          <h3>论文验证边界</h3>
-          <p>当前 TEE 为模拟远程认证流程；多基站测试验证的是独立中继进程上的协议层多跳，不等同于多台物理基站外场无线链路。论文结果证明原型的协议与工程可行性，不将其表述为已完成的大规模生产部署。</p>
         </div>
       </section>
 

@@ -496,17 +496,18 @@
     <main class="page">
       <section class="hero project-hero">
         <div class="project-hero-copy">
+          <div class="project-kicker">TRUSTLINK / UAV PAYLOAD SECURITY</div>
           <h1>为无人系统载荷<br />建立可验证的安全链</h1>
-          <p class="lead">TrustLink 面向无人机、无人车与地面机器人在开放无线、跨网远控和弱覆盖环境中的通信风险，将可信接入、身份认证、端到端密钥、载荷保护与路径隐私组织为一套可运行的安全通信系统。</p>
+          <p class="lead">TrustLink 面向无人机、无人车与地面机器人在开放无线、跨网远控和弱覆盖环境中的通信风险，将端点可信、身份认证、端到端密钥、载荷保护与路径隐私组织为一套可运行的安全通信原型。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#architecture">系统架构</a>
-            <a class="btn btn-secondary" href="#evidence">运行表现</a>
+            <a class="btn btn-secondary" href="#evidence">原型验证</a>
           </div>
         </div>
         <aside class="project-scope" aria-label="TrustLink 覆盖范围">
-          <div><span>TRUST</span><b>端点可信</b><p>接入证明与身份认证共同确认通信双方。</p></div>
-          <div><span>PAYLOAD</span><b>载荷保护</b><p>遥测、控制与视频在端点间加密认证。</p></div>
-          <div><span>ROUTE</span><b>路径最小知情</b><p>中继只处理本跳转发，不见明文与全路径。</p></div>
+          <div><span>01</span><b>端点可信</b><p>模拟 TEE 认证流程确认平台状态。</p></div>
+          <div><span>02</span><b>载荷保护</b><p>遥测、控制与视频在端点间加密认证。</p></div>
+          <div><span>03</span><b>路径最小知情</b><p>中继只处理本跳转发，不见明文与全路径。</p></div>
         </aside>
       </section>
 
@@ -536,68 +537,21 @@
 
       <section class="section project-section" id="architecture">
         <div class="section-head">
-          <h2>从地面控制台到无人端的完整系统架构</h2>
-          <p>作品由控制展示、安全协议、路径服务和终端执行四部分组成。各模块既能独立运行，也能沿同一条任务链路协同完成接入、建链、传输和状态呈现。</p>
+          <h2>一套系统，三层安全能力</h2>
+          <p>地面站、无人设备、目录服务与中继节点被拆为可运行模块；安全机制嵌入数传、图传和 Web 展示闭环，而非停留在独立算法演示。</p>
         </div>
         <div class="project-architecture">
           <div class="image-panel project-architecture-image">
             <img src="../assets/images/report/architecture.png" alt="TrustLink 无人系统载荷链路安全通信架构图" />
-            <div class="image-caption">地面站与无人设备保持端到端安全关系；需要跨节点传输时，目录服务、路径选择和逐跳加密共同建立受保护的承载电路。</div>
+            <div class="image-caption">地面站与无人设备之间建立端到端安全通道；跨节点时由目录、选路与洋葱电路提供外层路径保护。</div>
           </div>
-          <div class="project-system-stack" aria-label="TrustLink 系统组成">
-            <article>
-              <span>CONTROL &amp; VIEW</span>
-              <h3>地面控制与展示</h3>
-              <p>统一启动数传、图传和安全会话，持续呈现飞行遥测、视频画面、连接状态与中继路径。</p>
-            </article>
-            <article>
-              <span>SECURE SESSION</span>
-              <h3>安全协议编排</h3>
-              <p>按顺序完成接入证明、SRP-PAKE 身份认证、X3DH 密钥协商和应用载荷保护。</p>
-            </article>
-            <article>
-              <span>PATH SERVICE</span>
-              <h3>目录与路径服务</h3>
-              <p>维护可用节点信息，综合链路质量与节点状态选择路径，并为每一跳建立独立密钥。</p>
-            </article>
-            <article>
-              <span>EDGE &amp; RELAY</span>
-              <h3>无人端与中继执行</h3>
-              <p>无人端采集遥测和视频，中继节点只解开本跳封装并转发，端到端载荷始终保持受保护状态。</p>
-            </article>
+          <div class="project-chain" aria-label="TrustLink 安全链">
+            <div><span>设备</span><b>可信</b><small>TEE 认证流程</small></div>
+            <div><span>身份</span><b>已认证</b><small>SRP-PAKE</small></div>
+            <div><span>密钥</span><b>端到端</b><small>X3DH 协商</small></div>
+            <div><span>载荷</span><b>可验证</b><small>加密、MAC、防重放</small></div>
+            <div><span>路径</span><b>最小知情</b><small>VRF、AKE、洋葱转发</small></div>
           </div>
-        </div>
-
-        <div class="project-mission-flow" aria-label="一次安全通信任务的运行流程">
-          <div class="project-flow-title">
-            <h3>一次安全通信任务如何运行</h3>
-            <p>从操作者发起任务，到无人端数据回传，安全状态与业务数据沿同一条链路推进。</p>
-          </div>
-          <ol>
-            <li><b>发起任务</b><span>地面控制台选择直连、多基站或混合节点模式，并启动对应的数传与图传服务。</span></li>
-            <li><b>确认端点</b><span>双方先校验接入证明，再通过口令认证建立只属于本次会话的身份上下文。</span></li>
-            <li><b>建立通道</b><span>直连模式生成端到端密钥；多跳模式同时完成路径选择、逐跳协商与洋葱电路构建。</span></li>
-            <li><b>保护载荷</b><span>遥测、控制和视频在发送前完成加密与完整性认证，序列号和时间戳用于识别重放。</span></li>
-            <li><b>呈现状态</b><span>地面端解密有效数据，并将链路、遥测、图传和路径信息同步到 Web 控制台。</span></li>
-          </ol>
-        </div>
-
-        <div class="project-architecture-details">
-          <article>
-            <span>数据流</span>
-            <h3>业务数据先保护，再进入网络</h3>
-            <p>遥测、控制指令与视频帧在端点完成加密认证。无论中间经过固定基站、无人机还是地面机器人，中继看到的都只是受保护载荷。</p>
-          </article>
-          <article>
-            <span>密钥流</span>
-            <h3>端到端密钥与逐跳密钥分工</h3>
-            <p>端到端密钥负责保护真实业务内容，逐跳密钥负责隐藏路径上的转发关系；路径变化后重新绑定会话与电路上下文。</p>
-          </article>
-          <article>
-            <span>状态流</span>
-            <h3>安全结果回到统一控制台</h3>
-            <p>连接结果、协议阶段、遥测数据、视频状态和实际中继路径被集中展示，让操作者能直接检查当前链路是否可用、可信、连续。</p>
-          </article>
         </div>
       </section>
 
@@ -610,14 +564,14 @@
           <article class="card project-capability">
             <div class="project-capability-top"><span>DIRECT LINK</span><b>端点安全根</b></div>
             <h3>四阶段端到端协议</h3>
-            <p>状态机依次完成可信接入证明校验、SRP-PAKE、SRP 保护的 X3DH 身份材料交换与应用层数据保护。任一阶段失败，临时状态和密钥材料会被清除。</p>
-            <div class="project-proof">接入证明 → SRP-PAKE → X3DH → SM4/SM3 + 序列号 + 时间戳</div>
+            <p>状态机依次完成模拟 TEE 远程认证、SRP-PAKE、SRP 保护的 X3DH 身份材料交换与应用层数据保护。任一阶段失败，临时状态和密钥材料会被清除。</p>
+            <div class="project-proof">TEE -> SRP-PAKE -> X3DH -> SM4/SM3 + 序列号 + 时间戳</div>
           </article>
           <article class="card project-capability">
             <div class="project-capability-top"><span>MULTI-HOP</span><b>跨站路径隐私</b></div>
             <h3>先建电路，再承载握手</h3>
             <p>源端从目录筛选候选中继，经 VRF 生成可验证路径，与每一跳执行 ntor 风格 AKE，随后建立洋葱电路并在其中完成四阶段握手。</p>
-            <div class="project-proof">目录过滤 → VRF 选路 → 每跳 AKE → K_EO 预保护 → 洋葱转发</div>
+            <div class="project-proof">目录过滤 -> VRF 选路 -> 每跳 AKE -> K_EO 预保护 -> 洋葱转发</div>
           </article>
           <article class="card project-capability">
             <div class="project-capability-top"><span>WEAK COVERAGE</span><b>弱覆盖安全接力</b></div>
@@ -647,28 +601,27 @@
 
       <section class="section project-section" id="evidence">
         <div class="section-head">
-          <h2>系统运行表现</h2>
-          <p>从安全会话建立、实时图传到三跳遥测和混合路径规划，关键链路均可在展示平台中直观看到。</p>
+          <h2>原型已验证哪些能力</h2>
+          <p>以下数据来自论文中的运行日志和集成测试，分别覆盖直连图传、独立中继进程上的协议层三跳，以及混合路径规划。</p>
         </div>
         <div class="project-evidence-grid">
           <article><span>四阶段直连图传</span><b>1.97 s</b><p>安全会话建立耗时。</p></article>
           <article><span>320 x 240 图传</span><b>27.8 fps</b><p>63.2 s 内发送 1757 帧的平均值。</p></article>
           <article><span>协议层三跳数传</span><b>85 / 85</b><p>遥测样本均通过 MAC 与时间戳校验。</p></article>
           <article><span>三跳低延迟图传</span><b>约 28.7 fps</b><p>地面站解密后的前端滑动窗口统计。</p></article>
-          <article><span>混合路径规划</span><b>base → uav → base</b><p>验证固定基站和无人机中继共同参与建链。</p></article>
+          <article><span>混合路径规划</span><b>base -> uav -> base</b><p>验证固定基站和无人机中继共同参与建链。</p></article>
         </div>
       </section>
 
       <section class="section project-section project-boundary">
         <div class="project-boundary-grid">
           <div>
-            <span>UNIFIED DEMONSTRATION</span>
-            <h2>一套平台串联完整的无人系统安全通信任务</h2>
+            <span>ENGINEERING POSITION</span>
+            <h2>从安全链路原型，走向可扩展通信底座</h2>
           </div>
-          <div class="project-entry-list">
-            <a href="data-video.html"><b>数传图传</b><span>查看端到端安全会话、遥测数据与实时视频。</span></a>
-            <a href="multi-station.html?mode=simulation"><b>多基站链路</b><span>查看目录选路、逐跳建链和洋葱转发过程。</span></a>
-            <a href="multi-station.html?mode=hybrid"><b>混合节点接力</b><span>查看固定基站与无人节点共同参与的弱覆盖路径。</span></a>
+          <div>
+            <p>当前作品已完成地面站、树莓派无人机端、目录服务、独立中继进程、数传、图传和 Web 展示的原型闭环。它证明协议与工程设计可行，而非宣称已完成生产级大规模部署。</p>
+            <p>论文明确保留三项后续工作：将模拟 TEE 迁移至真实可信硬件；在真实 4G/5G 外场与更多物理中继上验证移动切换；补充批量重放、篡改和异常中继注入测试。</p>
           </div>
         </div>
       </section>
