@@ -4036,3 +4036,70 @@ summary:focus-visible {
 .innovation-page .innovation-proof {
   color: #36565b;
 }
+
+/* Project chain cards: the markup is shared with the architecture diagram. */
+.project-chain {
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-panel);
+  background: var(--line-strong);
+}
+
+.project-chain > div {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  align-items: center;
+  min-height: 82px;
+  padding: 14px 18px;
+  background: var(--panel);
+}
+
+.project-chain > div:nth-child(1) { background: #e4f1f0; }
+.project-chain > div:nth-child(2) { background: #e6f1e9; }
+.project-chain > div:nth-child(3) { background: #e8edf5; }
+.project-chain > div:nth-child(4) { background: #f3eee2; }
+.project-chain > div:nth-child(5) { background: #f2e8e5; }
+
+.project-chain span {
+  grid-row: 1 / span 2;
+  align-self: start;
+  color: #2e6f74;
+  font-size: 14px;
+  font-weight: 760;
+  line-height: 1.35;
+}
+
+.project-chain > div:nth-child(2) span { color: #3f7f5a; }
+.project-chain > div:nth-child(3) span { color: #4a6fa2; }
+.project-chain > div:nth-child(4) span { color: #99621d; }
+.project-chain > div:nth-child(5) span { color: #a8434b; }
+
+.project-chain b {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.project-chain small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+@media (max-width: 620px) {
+  .project-chain > div {
+    grid-template-columns: 64px minmax(0, 1fr);
+    min-height: 76px;
+    padding: 13px 15px;
+  }
+
+  .project-chain b {
+    font-size: 17px;
+  }
+}
